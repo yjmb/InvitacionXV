@@ -53,8 +53,8 @@ input:focus{border-color:var(--gold-soft);box-shadow:0 0 0 3px rgba(212,185,138,
  radial-gradient(1.5px 1.5px at 60% 8%, rgba(255,255,255,.25), transparent)}
 .lily-photo{position:absolute;width:clamp(186px,60vw,258px);opacity:.5;z-index:1;pointer-events:none;mix-blend-mode:screen}
 .lily-photo.pos-tl{top:-6%;left:-10%;transform:rotate(180deg)}
-.lily-photo.pos-br{bottom:-11%;right:-12%}
-.frame{position:relative;z-index:2;flex:1;display:flex;flex-direction:column;border:1px solid rgba(184,150,90,.6);border-radius:2px;padding:clamp(34px,11vw,47px) clamp(17px,5.6vw,24px)}
+.lily-photo.pos-br{bottom:-17%;right:-13%}
+.frame{position:relative;z-index:2;flex:1;display:flex;flex-direction:column;border:1px solid rgba(184,150,90,.6);border-radius:2px;padding:clamp(34px,11vw,47px) clamp(17px,5.6vw,24px) clamp(58px,18.5vw,78px)}
 .frame:before{content:"";position:absolute;inset:6px;border:1px solid rgba(184,150,90,.32);pointer-events:none}
 .scroll-corner{position:absolute;width:clamp(96px,30.8vw,132px);height:clamp(96px,30.8vw,132px);z-index:3;opacity:.95}
 .scroll-corner.pos-tr{top:-10px;right:-10px}
@@ -66,12 +66,12 @@ input:focus{border-color:var(--gold-soft);box-shadow:0 0 0 3px rgba(212,185,138,
 .divider-lily .line{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
 .divider-lily svg{width:clamp(16px,5.13vw,22px);height:clamp(16px,5.13vw,22px);flex-shrink:0}
 .guest-name{font-family:'Pinyon Script',cursive;font-size:clamp(24px,8.6vw,38px);line-height:1.12;color:var(--gold-bright);text-shadow:0 2px 18px rgba(232,199,122,.35);margin:0 auto clamp(16px,6.2vw,24px);padding:0 4px;max-width:94%;overflow-wrap:break-word;word-break:normal}
-.pass-number{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:clamp(46px,15.4vw,66px);line-height:1;color:var(--cream);margin-bottom:2px}
+.pass-number{font-family:'Jost',sans-serif;font-weight:500;font-variant-numeric:lining-nums;font-size:clamp(44px,14.8vw,63px);line-height:1;color:var(--cream);margin-bottom:2px}
 .pass-label{font-family:'Jost',sans-serif;font-weight:400;font-size:clamp(10px,3.3vw,14px);letter-spacing:.4em;color:var(--gold-soft);margin-bottom:clamp(18px,6.7vw,26px)}
 .reserved-text{font-family:'Cormorant Garamond',serif;font-size:clamp(14px,4.4vw,19px);line-height:1.5;color:rgba(251,247,239,.85);max-width:clamp(208px,67vw,288px);margin:0 auto}
 .table-line{margin-top:clamp(12px,4.5vw,18px);font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(15px,5vw,22px);color:var(--blush-soft)}
 .table-line span{display:block;font-family:'Jost',sans-serif;font-style:normal;font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:3px}
-.footer-note{position:relative;z-index:4;text-align:center;padding:7px 14px;margin:clamp(12px,3.6vw,18px) auto 2px;width:fit-content;border-radius:20px;background:rgba(15,24,48,.55);font-family:'Jost',sans-serif;font-weight:400;font-size:clamp(9px,2.8vw,12px);letter-spacing:.14em;color:rgba(232,199,122,.9);text-shadow:0 1px 4px rgba(0,0,0,.6);white-space:nowrap}
+.footer-note{position:relative;z-index:4;text-align:center;padding:7px 14px;margin:clamp(12px,3.6vw,18px) auto 0;width:fit-content;border-radius:20px;background:rgba(15,24,48,.7);font-family:'Jost',sans-serif;font-weight:400;font-size:clamp(9px,2.8vw,12px);letter-spacing:.14em;color:rgba(232,199,122,.9);text-shadow:0 1px 4px rgba(0,0,0,.6);white-space:nowrap}
 .jpg-btn{border:1px solid rgba(212,185,138,.4);background:rgba(251,247,239,.04);color:var(--gold-soft);border-radius:8px;padding:8px 14px;font:600 10px Arial,sans-serif;letter-spacing:1px;text-transform:uppercase;cursor:pointer}
 .jpg-btn:hover{background:rgba(212,185,138,.12)}
 .empty{grid-column:1/-1;text-align:center;padding:40px 20px;color:rgba(251,247,239,.55);font:13px Arial,sans-serif}
@@ -153,6 +153,7 @@ function passHTML(g,idx){
  const passes=esc(g.passes);
  const hasTable=g.table.trim().length>0;
  const tableLine=hasTable?`<div class="table-line"><span>Mesa</span>${esc(g.table.trim())}</div>`:'';
+ const reservedText=g.passes===1?'Ha sido reservado<br>en su honor':'Han sido reservados<br>en su honor';
  return `<div class="pass-wrap">
   <div class="pass-frame" data-pass-id="${idx}">
    <article class="pass">
@@ -168,7 +169,7 @@ function passHTML(g,idx){
       <div class="guest-name">${name}</div>
       <div class="pass-number">${passes}</div>
       <div class="pass-label">${g.passes===1?'PASE':'PASES'}</div>
-      <div class="reserved-text">Ha sido reservado<br>en su honor</div>
+      <div class="reserved-text">${reservedText}</div>
       ${tableLine}
      </div>
      <div class="footer-note">Credencial de acceso &middot; No transferible</div>
@@ -188,18 +189,43 @@ function renderPasses(){
   try{ await downloadPassAsJPG(idx, g.name); } finally { btn.disabled=false; btn.textContent=old; }
  }));
 }
+function canvasToBlob(canvas, type, quality){
+ return new Promise(resolve=>canvas.toBlob(resolve, type, quality));
+}
 async function downloadPassAsJPG(idx, guestName){
  const node=document.querySelector(`.pass-frame[data-pass-id="${idx}"]`);
  if(!node) return;
  if(document.fonts && document.fonts.ready) await document.fonts.ready;
- const canvas = await html2canvas(node, {backgroundColor:null, scale:3, useCORS:true});
- const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
+ // solid navy background: JPG has no transparency, so a transparent capture
+ // would otherwise be flattened to plain black by the browser, losing the
+ // rounded gold frame. Filling with a matching navy keeps the design intact.
+ const canvas = await html2canvas(node, {backgroundColor:'#0c1730', scale:3, useCORS:true});
+ const blob = await canvasToBlob(canvas, 'image/jpeg', 0.95);
+ const filename = `Pase_${slug(guestName)}.jpg`;
+
+ // On mobile, a plain <a download> often fails to save to the photo gallery.
+ // Prefer the native share sheet (Save Image / Add to Photos) when available.
+ if (navigator.canShare && blob) {
+  try{
+   const file = new File([blob], filename, {type:'image/jpeg'});
+   if (navigator.canShare({files:[file]})) {
+    await navigator.share({files:[file], title:filename, text:'Pase de invitación'});
+    return;
+   }
+  }catch(err){
+   // user cancelled the share sheet, or share failed — fall back to download below
+   if (err && err.name === 'AbortError') return;
+  }
+ }
+
+ const url = URL.createObjectURL(blob);
  const a=document.createElement('a');
- a.href=dataUrl;
- a.download=`Pase_${slug(guestName)}.jpg`;
+ a.href=url;
+ a.download=filename;
  document.body.appendChild(a);
  a.click();
  a.remove();
+ setTimeout(()=>URL.revokeObjectURL(url), 4000);
 }
 document.getElementById('addBtn').addEventListener('click',()=>{guests.push({name:'',passes:1,table:''});save();renderRows();renderPasses();setTimeout(()=>document.querySelectorAll('#guestRows input[data-k="name"]')[guests.length-1]?.focus(),0)});
 document.getElementById('downloadAllBtn').addEventListener('click', async ()=>{
